@@ -25,7 +25,7 @@ public class ObjectInstantiator : MonoBehaviour
     {
         Instantiate(m_thiefPrefab, m_thiefPos,Quaternion.identity);
     }
-    protected void InstantiateCopsAndSetPosition()
+    protected void InstantiateCopsAndSetNonOverlapingPosition()
     {
         if (m_copsTransformList == null || m_copsTransformList.Count != m_copsCount)
         {

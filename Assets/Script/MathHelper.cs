@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MathHelper
+public struct MathHelper
 {
     static int m_gapBetweenTwoCircle = 1;
     static int m_dontExceedThisLimit = 2000;
@@ -52,5 +52,20 @@ public class MathHelper
     static Vector2 GiveRandomNumber(float _x = 4,float _y=4)
     {
         return new Vector2(Random.Range(-_x, _x),Random.Range(-_y,_y));
+    }
+
+    public static float AngleUsingUnityVector2(Vector2 _myPos, Vector2 _firstVector, Vector2 _secVector)
+    {
+        Vector2 firstLine = new Vector2(_myPos.x - _firstVector.x, _myPos.y - _firstVector.y);
+        Vector2 secLine = new Vector2(_myPos.x - _secVector.x, _myPos.y - _secVector.y);
+        return Vector2.Angle(firstLine, secLine);
+    }
+    public static Transform[] SortThePositionBasedOnOrigin(Transform[] _copsTransformArr, Vector2 _origin)
+    {
+        Transform[] tmp_posTransArr = _copsTransformArr;
+
+        ClockwiseComparer cc = new ClockwiseComparer(_origin);
+        System.Array.Sort(tmp_posTransArr, cc);
+        return tmp_posTransArr;
     }
 }

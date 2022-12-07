@@ -18,53 +18,37 @@ public class SortAndFindAngle : ObjectInstantiator
         if (m_relaodCops)
         {
             m_relaodCops = false;
-            InstantiateCopsAndSetPosition();
+            InstantiateCopsAndSetNonOverlapingPosition();
             m_findAngle = true;
         }
         if (m_findAngle)
         {
             m_findAngle = false;
 
-            FindTheAngle(SortThePosition());
+            FindTheAngle(MathHelper.SortThePositionBasedOnOrigin(m_copsTransformList.ToArray(),m_thiefPos));
         }
     }
 
-    Transform[] SortThePosition()
+    void FindTheAngle(Transform[] _sortedPosArr)
     {
-        Transform[] tmp_posTransArr = m_copsTransformList.ToArray();
         m_pWithAngle = new List<TransformPointsWithAngle>();
-
-        ClockwiseComparer cc = new ClockwiseComparer(m_thiefPos);
-        Array.Sort(tmp_posTransArr, cc);
-        return tmp_posTransArr;
-    }
-
-    void FindTheAngle(Transform[] _posArr)
-    {
         int largestAngleIndex = 0;
-        for (int i = 0; i < _posArr.Length; i++)
+        for (int i = 0; i < _sortedPosArr.Length; i++)
         {
-            if (i == _posArr.Length - 1)
+            if (i == _sortedPosArr.Length - 1)
             {
-                 m_pWithAngle.Add(new TransformPointsWithAngle(_posArr[i], _posArr[0],
-                     AngleUsingUnityVector2(m_thiefPos, _posArr[i].position, _posArr[0].position)));
+                 m_pWithAngle.Add(new TransformPointsWithAngle(_sortedPosArr[i], _sortedPosArr[0],
+                    MathHelper.AngleUsingUnityVector2(m_thiefPos, _sortedPosArr[i].position, _sortedPosArr[0].position)));
             }
             else
             {
-                m_pWithAngle.Add(new TransformPointsWithAngle(_posArr[i], _posArr[i+1],
-                     AngleUsingUnityVector2(m_thiefPos, _posArr[i].position, _posArr[i+1].position)));
+                m_pWithAngle.Add(new TransformPointsWithAngle(_sortedPosArr[i], _sortedPosArr[i+1],
+                     MathHelper.AngleUsingUnityVector2(m_thiefPos, _sortedPosArr[i].position, _sortedPosArr[i+1].position)));
             }
 
             if (m_pWithAngle[i].angle > m_pWithAngle[largestAngleIndex].angle)
                 largestAngleIndex = i;
         }
         m_pWithAngle[largestAngleIndex].IsLargestAngle = true;
-    }
-
-    public float AngleUsingUnityVector2(Vector2 _myPos, Vector2 _firstVector, Vector2 _secVector)
-    {
-        Vector2 firstLine = new Vector2(_myPos.x - _firstVector.x, _myPos.y - _firstVector.y);
-        Vector2 secLine = new Vector2(_myPos.x - _secVector.x, _myPos.y - _secVector.y);
-        return Vector2.Angle(firstLine, secLine);
     }
 }
